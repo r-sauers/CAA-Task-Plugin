@@ -157,6 +157,8 @@ class CAA_Task_Plugin {
 
 		$plugin_admin = new CAA_Task_Plugin_Admin( $this->get_plugin_name(), $this->get_version() );
 
+		$this->loader->add_action( 'admin_menu', $plugin_admin, 'create_admin_menu' );
+
 	}
 
 	/**
