@@ -24,7 +24,7 @@
  * @subpackage CAA_Task_Plugin/includes
  * @author     Ryan Sauers <sauer319@umn.edu>
  */
-class Plugin_Name_Loader {
+class CAA_Task_Plugin_Loader {
 
 	/**
 	 * The array of actions registered with WordPress.

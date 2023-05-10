@@ -68,7 +68,7 @@ class CAA_Task_Plugin_Admin {
 			'edit_pages',
 			$toplevel_slug,
 			array( get_called_class(), 'generate_admin_menu_html' ),
-			plugin_dir_url(__FILE__) . 'admin/images/menu_icon.png',
+			plugin_dir_url(__FILE__) . 'images/menu_icon.png',
 			20
 		);
 
@@ -87,7 +87,7 @@ class CAA_Task_Plugin_Admin {
 	 * 
 	 * @since	1.0.0
 	 */
-	private function generate_admin_menu_html() {
+	public static function generate_admin_menu_html() {
 		?>
 		<div class="wrap">
 			<h1><?php echo esc_html( get_admin_page_title() ); ?></h1>
@@ -100,7 +100,7 @@ class CAA_Task_Plugin_Admin {
 	 * 
 	 * @since 1.0.0
 	 */
-	private function generate_create_event_tasks_submenu_html() {
+	public static function generate_create_event_tasks_submenu_html() {
 		?>
 		<div class="wrap">
 			<h1><?php echo esc_html( get_admin_page_title() ); ?></h1>
