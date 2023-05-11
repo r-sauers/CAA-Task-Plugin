@@ -33,7 +33,26 @@ class CAA_Task_Plugin_Activator {
 	 * @since    1.0.0
 	 */
 	public static function activate() {
+		CAA_Task_Plugin_Activator::create_variable_table();
+	}
 
+	private static function create_variable_table() {
+		// Code adapted from: https://codex.wordpress.org/Creating_Tables_with_Plugins
+
+
+		global $wpdb;
+
+		$table_name = $wpdb->prefix . 'CAA_TASK_PLUGIN_VARIABLES';
+
+		$charset_collate = $wpdb->get_charset_collate();
+
+		$sql = "CREATE TABLE $table_name (
+		clientID varchar(55) DEFAULT '' NOT NULL,
+		clientSecret varchar(55) DEFAULT '' NOT NULL
+		) $charset_collate;";
+
+		require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
+		dbDelta( $sql );
 	}
 
 }

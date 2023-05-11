@@ -55,6 +55,50 @@ class CAA_Task_Plugin_Admin {
 	}
 
 	/**
+	 * Register the stylesheets for the admin area.
+	 *
+	 * @since    1.0.0
+	 */
+	public function enqueue_styles() {
+
+		/**
+		 *
+		 * An instance of this class should be passed to the run() function
+		 * defined in Plugin_Name_Loader as all of the hooks are defined
+		 * in that particular class.
+		 *
+		 * The Plugin_Name_Loader will then create the relationship
+		 * between the defined hooks and the functions defined in this
+		 * class.
+		 */
+
+		wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/CAA-Task-Plugin-admin.css', array(), $this->version, 'all' );
+
+	}
+
+	/**
+	 * Register the JavaScript for the admin area.
+	 *
+	 * @since    1.0.0
+	 */
+	public function enqueue_scripts() {
+
+		/**
+		 *
+		 * An instance of this class should be passed to the run() function
+		 * defined in Plugin_Name_Loader as all of the hooks are defined
+		 * in that particular class.
+		 *
+		 * The Plugin_Name_Loader will then create the relationship
+		 * between the defined hooks and the functions defined in this
+		 * class.
+		 */
+
+		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/CAA-Task-Plugin-admin.js', array( 'jquery' ), $this->version, false );
+
+	}
+
+	/**
 	 * Create the admin menu for the plugin. The admin menu includes submenus.
 	 * 
 	 * @since	1.0.0
@@ -88,11 +132,13 @@ class CAA_Task_Plugin_Admin {
 	 * @since	1.0.0
 	 */
 	public static function generate_admin_menu_html() {
-		?>
-		<div class="wrap">
-			<h1><?php echo esc_html( get_admin_page_title() ); ?></h1>
-		</div>
-		<?php
+
+		global $wpdb;
+		$client_id = $wpdb->get_var( "SELECT clientID from {$wpdb->prefix}CAA_TASK_PLUGIN_VARIABLES" );
+		$redirect_uri = "http://localhost:8880/wp-admin/admin.php?page=caa-task-app";
+
+		require plugin_dir_path(__FILE__) . 'partials/CAA-Task-Plugin-admin-menu.php';
+		
 	}
 
 	/**
