@@ -106,7 +106,7 @@ class CAA_Task_Plugin_Admin {
 	public function create_admin_menu() {
 
 		$toplevel_slug = 'caa-task-app';
-		add_menu_page(
+		$hookname = add_menu_page(
 			'CAA Task App',
 			'CAA Task App',
 			'edit_pages',
@@ -115,6 +115,7 @@ class CAA_Task_Plugin_Admin {
 			plugin_dir_url(__FILE__) . 'images/menu_icon.png',
 			20
 		);
+		add_action( 'load-' . $hookname, array( get_called_class(), 'ensure_login' ) ); 
 
 		add_submenu_page(
 			$toplevel_slug,
@@ -127,18 +128,29 @@ class CAA_Task_Plugin_Admin {
 	}
 
 	/**
+	 * Wrapper for CAA_Task_Plugin_Authenticator::ensure_login
+	 * 
+	 * @since	1.0.0
+	 */
+	public static function ensure_login() {
+		CAA_Task_Plugin_Authenticator::ensure_login();
+	}
+
+	/**
 	 * Generate the html for the page linked to the top level admin menu for the plugin.
 	 * 
 	 * @since	1.0.0
 	 */
 	public static function generate_admin_menu_html() {
 
-		global $wpdb;
-		$client_id = $wpdb->get_var( "SELECT clientID from {$wpdb->prefix}CAA_TASK_PLUGIN_VARIABLES" );
-		$redirect_uri = "http://localhost:8880/wp-admin/admin.php?page=caa-task-app";
+		if ( !CAA_Task_Plugin_Authenticator::is_user_logged_in() ) {
+			// draw login page
+			// CAA_Task_Plugin_Authenticator::login_user(); // send them to main page with a 'not logged in flag'
+		} else {
+			// draw main page
+			require plugin_dir_path(__FILE__) . 'partials/CAA-Task-Plugin-admin-menu-logged-in.php';
+		}
 
-		require plugin_dir_path(__FILE__) . 'partials/CAA-Task-Plugin-admin-menu.php';
-		
 	}
 
 	/**

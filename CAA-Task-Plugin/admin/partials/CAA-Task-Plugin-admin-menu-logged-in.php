@@ -20,14 +20,7 @@
 <!-- This file should primarily consist of HTML with a little bit of PHP. -->
 <div class="wrap">
     <h1><?php echo esc_html( get_admin_page_title() ); ?></h1>
+    <h2>Successfully Logged in.</h2>
     <p>Explanation of how to use plugin goes here</p>
-    <ul>
-        <li> Client ID: <?php echo $client_id ?></li>
-        <li> Redirect URI: <?php echo esc_html($redirect_uri) ?></li>
-    </ul>
-        
-    <button onclick=<?php 
-    echo 'window.location.href="https://launchpad.37signals.com/authorization/new?type=web_server&client_id=' . $client_id . '&redirect_uri=' . $redirect_uri . '"';
-    ?> >Login</button>
 </div>
 <?php

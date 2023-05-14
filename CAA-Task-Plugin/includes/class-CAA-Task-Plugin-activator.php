@@ -42,13 +42,13 @@ class CAA_Task_Plugin_Activator {
 
 		global $wpdb;
 
-		$table_name = $wpdb->prefix . 'CAA_TASK_PLUGIN_VARIABLES';
+		$table_name = $wpdb->prefix . 'caa_task_plugin_variables';
 
 		$charset_collate = $wpdb->get_charset_collate();
 
 		$sql = "CREATE TABLE $table_name (
-		clientID varchar(55) DEFAULT '' NOT NULL,
-		clientSecret varchar(55) DEFAULT '' NOT NULL
+		client_id varchar(55) DEFAULT '' NOT NULL,
+		client_secret varchar(55) DEFAULT '' NOT NULL
 		) $charset_collate;";
 
 		require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );

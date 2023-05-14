@@ -125,6 +125,12 @@ class CAA_Task_Plugin {
 		 */
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/class-CAA-Task-Plugin-public.php';
 
+		/**
+		 * The class responsible for authenticating the user with third party integrations 
+		 * such as basecamp
+		 */
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-CAA-Task-Plugin-Authenticator.php';
+
 		$this->loader = new CAA_Task_Plugin_Loader();
 
 	}
@@ -160,7 +166,7 @@ class CAA_Task_Plugin {
 		$this->loader->add_action( 'admin_menu', $plugin_admin, 'create_admin_menu' );
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
-
+		apply_filters( 'allowed_redirect_hosts', array( 'launchpad.37signals.com' ) );
 
 	}
 
