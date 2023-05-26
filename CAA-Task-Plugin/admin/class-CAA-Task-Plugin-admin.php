@@ -14,6 +14,18 @@
  */
 
 /**
+ * The class responsible for creating settings for the plugin.
+ */
+require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/partials/class-CAA-Task-Plugin-Settings.php';
+
+ /**
+ * The class responsible for authenticating the user with third party integrations 
+ * such as basecamp
+ */
+require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/partials/class-CAA-Task-Plugin-Authenticator.php';
+
+
+/**
  * The admin-specific functionality of the plugin.
  *
  * @package    CAA_Task_Plugin
@@ -26,7 +38,6 @@ class CAA_Task_Plugin_Admin {
 	 * The ID of this plugin.
 	 *
 	 * @since    1.0.0
-	 * @access   private
 	 * @var      string    $plugin_name    The ID of this plugin.
 	 */
 	private $plugin_name;
@@ -35,10 +46,17 @@ class CAA_Task_Plugin_Admin {
 	 * The version of this plugin.
 	 *
 	 * @since    1.0.0
-	 * @access   private
 	 * @var      string    $version    The current version of this plugin.
 	 */
 	private $version;
+
+	/**
+	 * The settings of this plugin.
+	 *
+	 * @since    1.0.0
+	 * @var      CAA_Task_Plugin_Settings    $settings    The settings of the plugin.
+	 */
+	private $settings;
 
 	/**
 	 * Initialize the class and set its properties.
@@ -51,6 +69,7 @@ class CAA_Task_Plugin_Admin {
 
 		$this->plugin_name = $plugin_name;
 		$this->version = $version;
+		$this->settings = new CAA_Task_Plugin_Settings( 'caa_task_plugin_settings', 'CAA Task Plugin' );
 
 	}
 
@@ -145,7 +164,7 @@ class CAA_Task_Plugin_Admin {
 
 		if ( !CAA_Task_Plugin_Authenticator::is_user_logged_in() ) {
 			// draw login page
-			// CAA_Task_Plugin_Authenticator::login_user(); // send them to main page with a 'not logged in flag'
+			CAA_Task_Plugin_Authenticator::login_user(); // send them to main page with a 'not logged in flag'
 		} else {
 			// draw main page
 			require plugin_dir_path(__FILE__) . 'partials/CAA-Task-Plugin-admin-menu-logged-in.php';
@@ -165,4 +184,27 @@ class CAA_Task_Plugin_Admin {
 		</div>
 		<?php
 	}
+
+	/**
+	 * Wrapper to create page for plugin settings.
+	 * 
+	 * @since 1.0.0
+	 */
+	public function create_options_page() {
+
+		$this->settings->create_options_page();
+
+	}
+
+	/**
+	 * Wrapper to initializae plugin settings.
+	 * 
+	 * @since 1.0.0
+	 */
+	public function settings_init() {
+
+		$this->settings->init();
+
+	}
+
 }
