@@ -30,6 +30,12 @@ if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
 	exit;
 }
 
-// drop table of plugin variables
-global $wpdb;
-$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}CAA_TASK_PLUGIN_VARIABLES" );
+/**
+ * Import CAA_Task_Plugin_Task_Definition_Table and CAA_Task_Plugin_Event_Type_Table to delete
+ * tables.
+ */
+require_once plugin_dir_path( dir_name( __FILE__ ) ) . 'admin/partials/class-CAA-Task-Plugin-Task-Definition-Table.php';
+require_once plugin_dir_path( dir_name( __FILE__ ) ) . 'admin/partials/class-CAA-Task-Plugin-Event-Type-Table.php';
+
+CAA_Task_Plugin_Task_Definition_Table::delete_table();
+CAA_Task_Plugin_Event_Type_Table::delete_table();
