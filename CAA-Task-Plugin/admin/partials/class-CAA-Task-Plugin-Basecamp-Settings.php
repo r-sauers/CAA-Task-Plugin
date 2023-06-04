@@ -81,14 +81,6 @@ class CAA_Task_Plugin_Basecamp_Settings {
             $settings_page_slug,
             $settings_section_slug
         );
-        add_filter( 
-            'sanitize_option_' . self::$redirect_uri->get_option_name(),
-            'sanitize_text_field'
-        );
-        add_filter( 
-            'sanitize_option_' . self::$redirect_uri->get_option_name(),
-            'sanitize_url'
-        );
 
 	}
 
@@ -113,5 +105,35 @@ class CAA_Task_Plugin_Basecamp_Settings {
         self::$client_id->update_value();
         self::$client_secret->update_value();
         self::$redirect_uri->update_value();
+    }
+
+    /**
+     * Getter for client id.
+     * 
+     * @since 1.0.0
+     * @return string The the client id
+     */
+    public static function get_client_id() {
+        return self::$client_id->get_value();
+    }
+
+    /**
+     * Getter for client secret.
+     * 
+     * @since 1.0.0
+     * @return string The client secret
+     */
+    public static function get_client_secret() {
+        return self::$client_secret->get_value();
+    }
+
+    /**
+     * Getter for redirect uri.
+     * 
+     * @since 1.0.0
+     * @return string The redirect uri
+     */
+    public static function get_redirect_uri() {
+        return self::$redirect_uri->get_value();
     }
 }

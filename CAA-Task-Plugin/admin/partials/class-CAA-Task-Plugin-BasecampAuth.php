@@ -60,19 +60,19 @@ class CAA_Task_Plugin_BasecampAuth {
 	 */
     public static function login_user() {
 
-        $client_id = CAA_Task_Plugin_Basecamp_Settings::$client_id->get_value();
-        $redirect_uri = CAA_Task_Plugin_Basecamp_Settings::$redirect_uri->get_value();
+        $client_id = CAA_Task_Plugin_Basecamp_Settings::get_client_id();
+        $redirect_uri = CAA_Task_Plugin_Basecamp_Settings::get_redirect_uri();
 
         $verification_code = self::get_verification_code();
         if ( empty( $verification_code ) ) {
             self::request_verification_code( $client_id, $redirect_uri ); // call exits process
         }
 
-        $client_secret = CAA_Task_Plugin_Basecamp_Settings::$client_secret->get_value();
+        $client_secret = CAA_Task_Plugin_Basecamp_Settings::get_client_secret();
         $auth_token = self::request_auth_token( $client_id, $redirect_uri, $client_secret, $verification_code );
         $auth_details = self::request_auth_details( $auth_token );
-        if ( self::has_project_permissions($auth_token) ) {
-            $auth_expire_ISO_8601 = self::get_auth_expire_ISO_8601( $auth_token );
+        if ( self::user_has_project_permissions( $auth_details ) ) {
+            $auth_expire_ISO_8601 = self::get_auth_expire_ISO_8601( $auth_details );
             self::save_auth_token( $auth_token, $auth_expire_ISO_8601 );
         }
     }

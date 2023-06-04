@@ -14,6 +14,13 @@
  */
 
 /**
+ * Import CAA_Task_Plugin_Task_Definition_Table and CAA_Task_Plugin_Event_Type_Table to intitialize
+ * tables.
+ */
+require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/partials/class-CAA-Task-Plugin-Task-Definition-Table.php';
+require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/partials/class-CAA-Task-Plugin-Event-Type-Table.php';
+
+/**
  * Fired during plugin activation.
  *
  * This class defines all code necessary to run during the plugin's activation.
@@ -26,33 +33,13 @@
 class CAA_Task_Plugin_Activator {
 
 	/**
-	 * Short Description.
-	 *
-	 * Long Description.
+	 * Creates tables for task definitions and event types.
 	 *
 	 * @since    1.0.0
 	 */
 	public static function activate() {
-		CAA_Task_Plugin_Activator::create_variable_table();
-	}
-
-	private static function create_variable_table() {
-		// Code adapted from: https://codex.wordpress.org/Creating_Tables_with_Plugins
-
-
-		global $wpdb;
-
-		$table_name = $wpdb->prefix . 'caa_task_plugin_variables';
-
-		$charset_collate = $wpdb->get_charset_collate();
-
-		$sql = "CREATE TABLE $table_name (
-		client_id varchar(55) DEFAULT '' NOT NULL,
-		client_secret varchar(55) DEFAULT '' NOT NULL
-		) $charset_collate;";
-
-		require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
-		dbDelta( $sql );
+		CAA_Task_Plugin_Task_Definition_Table::create_table();
+		CAA_Task_Plugin_Event_Type_Table::create_table();
 	}
 
 }
