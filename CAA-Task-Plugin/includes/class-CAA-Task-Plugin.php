@@ -125,6 +125,11 @@ class CAA_Task_Plugin {
 		 */
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/class-CAA-Task-Plugin-public.php';
 
+		/**
+		 * The class responsible for defining the API endpoints
+		 */
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'api/class-CAA-Task-Plugin-Rest-API.php';
+
 		$this->loader = new CAA_Task_Plugin_Loader();
 
 	}
@@ -155,8 +160,10 @@ class CAA_Task_Plugin {
 	 */
 	private function define_admin_hooks() {
 
-		$plugin_admin = new CAA_Task_Plugin_Admin( $this->get_plugin_name(), $this->get_version() );
+		$rest_api = new CAA_Task_Plugin_Rest_API();
+		$this->loader->add_action( 'rest_api_init', $rest_api, "register_routes" );
 
+		$plugin_admin = new CAA_Task_Plugin_Admin( $this->get_plugin_name(), $this->get_version() );
 		$this->loader->add_action( 'admin_menu', $plugin_admin, 'create_admin_menu' );
 		$this->loader->add_action( 'admin_menu', $plugin_admin, 'create_options_page' );
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
