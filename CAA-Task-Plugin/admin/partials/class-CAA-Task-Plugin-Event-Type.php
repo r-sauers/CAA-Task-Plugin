@@ -59,6 +59,14 @@ class CAA_Task_Plugin_Event_Type {
     private string $display_name;
 
     /**
+     * The description for the event type visible to the client.
+     * 
+     * @since   1.0.0
+     * @var     string  The description of the event type.
+     */
+    private string $description;
+
+    /**
      * The subtype ids of the event type.
      * 
      * Subtypes are event types that are inherited. 
@@ -120,6 +128,7 @@ class CAA_Task_Plugin_Event_Type {
         $this->subtypes = null;
         $this->task_definition_ids = [];
         $this->task_definitions = null;
+        $this->description = '';
     }
 
     /**
@@ -153,6 +162,26 @@ class CAA_Task_Plugin_Event_Type {
     }
 
     /**
+     * Gets the client-visible description for the event type.
+     * 
+     * @since 1.0.0
+     * @return   string  The description of the event type.
+     */
+    public function get_description() {
+        return $this->description;
+    }
+
+    /**
+     * Sets the client-visible description of the event type.
+     * 
+     * @since   1.0.0
+     * @param   string  $description is the description of the event type.
+     */
+    public function set_description( string $description ) {
+        $this->description = $description;
+    }
+
+    /**
      * Gets an array of the subtype ids.
      * 
      * @since   1.0.0
@@ -169,7 +198,38 @@ class CAA_Task_Plugin_Event_Type {
      * @return  string  A comma separated string of event type ids. e.g. "1,2,4,5" or "" if empty.
      */
     public function get_subtype_ids_csv(): string {
-        return str_implode( ",", array_map( 'strval', $this->subtype_ids ) );
+        if ( empty( $this->subtype_ids ) ) {
+            return "";
+        } else {
+            return implode( ",", array_map( 'strval', $this->subtype_ids ) );
+        }
+    }
+
+    public function contains_subtype( $event_type ){
+        $rec_subtype_ids = $this->get_subtype_ids_recursive();
+        foreach ( $rec_subtype_ids as $subtype_id ){
+            if( $event_type->get_id() === $subtype_id ){
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public function append_to_causes_no_cycle( $subtype ){
+        return ! $this->append_causes_cycle( $subtype );
+    }
+
+    public function get_addable_event_types(){
+        $addable_subtypes = CAA_Task_Plugin_Event_Type_Table::get_event_types();
+
+        // filter out subtypes that are already included
+        $addable_subtypes = array_filter( $addable_subtypes, array($this, 'contains_subtype' ) );
+        
+        $parent_event_type = $this;
+        // filter out subtypes that would cause a cycle
+        $addable_subtypes = array_filter( $addable_subtypes, array( $this, 'append_to_causes_no_cycle' ) );
+
+        return $addable_subtypes;
     }
 
     /**
@@ -180,11 +240,10 @@ class CAA_Task_Plugin_Event_Type {
      */
     public function get_subtypes(): array {
 
-        if ( ! isset( $this->subtypes ) ) {
+        if ( ! isset( $this->subtypes ) || empty( $this->subtypes ) ) {
 
             $this->subtypes = array_map( 'CAA_Task_Plugin_Event_Type_Table::get_event_type', $this->subtype_ids );
         }
-
         return $this->subtypes;
     }
 
@@ -200,38 +259,50 @@ class CAA_Task_Plugin_Event_Type {
      */
     public function set_subtypes_csv( $subtype_ids_csv ) {
 
-        $subtypes = null;
+        if ( "" === $subtype_ids_csv ) {
+            // handle empty case
+            
+            $this->subtype_ids = [];
+            $this->subtypes = null;
 
-        // parse csv to int array
-        $subtype_ids = array_map( function( $subtype_id ) {
-            if ( is_numeric( $subtype_id ) ) {
-                return intval( $subtype_id );
+        } else {
+            // handle nonempty case
+
+            $subtypes = null;
+
+            // parse csv to int array
+            $subtype_ids = array_map( function( $subtype_id ) {
+                if ( is_numeric( $subtype_id ) ) {
+                    return intval( $subtype_id );
+                }
+
+                throw new Exception( "Incorrect format!" );
+
+            }, explode( ',', $subtype_ids_csv ) );
+
+            // check for duplicate values at top level.
+            if ( count( $subtype_ids ) !== count( array_flip( $subtype_ids ) ) ) {
+                throw new Exception( "Duplicate values found!" );
             }
 
-            throw new Exception( "Incorrect format!" );
-
-        }, explode( ',', $subtype_ids_csv ) );
-
-        // check for duplicate values at top level.
-        if ( count( $subtype_ids ) !== count( array_flip( $subtype_ids ) ) ) {
-            throw new Exception( "Duplicate values found!" );
-        }
-
-        // check for cycles
-        foreach( $this->get_subtypes() as $subtype ) {
-            if ( $this->has_subtype_recursive( $subtype ) ) {
-                throw new Exception( "Cycle found!" );
+            // check for cycles
+            foreach( $this->get_subtypes() as $subtype ) {
+                if ( $this->append_causes_cycle( $subtype ) ) {
+                    throw new Exception( "Cycle found!" );
+                }
             }
-        }
 
-        // set the subtypes ids
-        $this->subtype_ids = $subtype_ids;
+            // set the subtypes ids
+            $this->subtype_ids = $subtype_ids;
+        }
     }
 
     /**
      * Adds a subtype.
      * 
      * This method ensures no cycles. It also ensures no duplicates at top level.
+     * 
+     * Subtype should be completely filled.
      * 
      * @since   1.0.0
      * @param   CAA_Task_Plugin_Event_Type $subtype is the event type that should be added as a subtype
@@ -240,12 +311,12 @@ class CAA_Task_Plugin_Event_Type {
     public function add_subtype( $subtype ) {
 
         // check if subtype already exists (no duplicates allowed!)
-        if ( array_search( $subtype->get_id(), $this->subtype_ids ) ) {
+        if ( in_array( $subtype->get_id(), $this->subtype_ids ) ) {
             return false; // A task definition with this ID already exists?
         }
 
         // check if adding subtype will create a cycle
-        if ( $subtype->get_id() === $this->get_id() || $subtype->has_subtype_recursive( $this ) ) {
+        if ( $this->append_causes_cycle( $subtype ) ) {
             return false;
         }
 
@@ -272,10 +343,10 @@ class CAA_Task_Plugin_Event_Type {
     public function remove_subtype( $subtype_to_remove ) {
 
         // remove from subtypes
-        if ( isset( $this->subtypes ) ) {
+        if ( isset( $this->subtypes ) && ! empty( $this->subtypes ) ) {
             $this->subtypes = array_filter( 
                 $this->subtypes, 
-                function ( $subtype ) {
+                function ( CAA_Task_Plugin_Event_Type $subtype ) use ( $subtype_to_remove ) {
                     return ! ( $subtype->get_id() === $subtype_to_remove->get_id() );
                 } 
             );
@@ -284,7 +355,7 @@ class CAA_Task_Plugin_Event_Type {
         // remove from subtype_ids
         $this->subtype_ids = array_filter( 
             $this->subtype_ids, 
-            function( $subtype_id ) {
+            function( int $subtype_id ) use ( $subtype_to_remove ) {
                 return ! ( $subtype_id === $subtype_to_remove->get_id() );
             } 
         );
@@ -297,7 +368,7 @@ class CAA_Task_Plugin_Event_Type {
      * @return  array   An array of integers, representing the task defintion ids.
      */
     public function get_task_definition_ids(): array {
-        return $this->task_definition_ids();
+        return $this->task_definition_ids;
     }
 
     /**
@@ -307,7 +378,11 @@ class CAA_Task_Plugin_Event_Type {
      * @return  string  A comma separated string of ids. e.g. "1,2,4,5" or "" if empty.
      */
     public function get_task_definition_ids_csv(): string {
-        return str_implode( ",", array_map( 'strval', $this->task_definition_ids ) );
+        if ( empty( $this->task_definition_ids ) ) {
+            return "";
+        } else {
+            return implode( ",", array_map( 'strval', $this->task_definition_ids ) );
+        }
     }
 
     /**
@@ -321,7 +396,7 @@ class CAA_Task_Plugin_Event_Type {
         if ( ! isset( $this->task_definitions ) ) {
             $this->task_definitions = [];
             foreach ( $this->task_definition_ids as $task_definition_id ) {
-                $task_definition = CAA_Task_Plugin_Event_Task_Definition_Table::get_task_definition( $task_definition_id );
+                $task_definition = CAA_Task_Plugin_Task_Definition_Table::get_task_definition( $task_definition_id );
                 array_push( $this->task_definitions, $task_definition );
             }
         }
@@ -338,26 +413,38 @@ class CAA_Task_Plugin_Event_Type {
      * @param   string  $task_definition_ids_csv is a comma separated string of event type ids. e.g. "1,2,4,5" or "" if none.
      * @todo    validate that ids exist in table.
      */
-    public function set_task_definitions_csv( $task_definition_ids_csv ) {
+    public function set_task_definitions_csv( string $task_definition_ids_csv ) {
 
-        // parse csv into int array
-        $task_definition_ids = array_map( function( $task_definition_id ) {
-            if ( is_numeric( $task_definition_id ) ) {
-                return intval( $task_definition_id );
+        
+        if ( "" === $task_definition_ids_csv ) {
+            // handle empty case
+
+            $this->task_definition_ids = [];
+            $this->task_definitions = null;
+
+        } else {
+            // handle nonempty case
+
+            // parse csv into int array
+            $task_definition_ids = array_map( function( int $task_definition_id ) {
+                if ( is_numeric( $task_definition_id ) ) {
+                    return intval( $task_definition_id );
+                }
+
+                throw new Exception( "Incorrect format!" );
+
+            }, explode( ',', $task_definition_ids_csv ) );
+
+            // check for duplicate values
+            if ( count( $task_definition_ids ) !== count( array_flip( $task_definition_ids ) ) ) {
+                throw new Exception( "Duplicate values found!" );
             }
 
-            throw new Exception( "Incorrect format!" );
+            // set task definitions
+            $this->task_definition_ids = $task_definition_ids;
+            $this->task_definitions = null;
 
-        }, explode( ',', $task_definition_ids_csv ) );
-
-        // check for duplicate values
-        if ( count( $task_definition_ids ) !== count( array_flip( $task_definition_ids ) ) ) {
-            throw new Exception( "Duplicate values found!" );
         }
-
-        // set task definitions
-        $this->task_definition_ids = $task_definition_ids;
-        $this->task_definitions = null;
     }
 
     /**
@@ -367,9 +454,9 @@ class CAA_Task_Plugin_Event_Type {
      * 
      * @since   1.0.0
      * @param   CAA_Task_Plugin_Task_Definition $task_definition is the task_definition that should be added.
-     * @return  boolean True if adding the task definition was successful, false if otherwise.
+     * @return  bool True if adding the task definition was successful, false if otherwise.
      */
-    public function add_task_definition( $task_definition ) {
+    public function add_task_definition( CAA_Task_Plugin_Task_Definition $task_definition ): bool {
 
         // check if task definition already exists (no duplicates allowed!)
         if ( array_search( $task_definition->get_id(), $this->task_definition_ids ) ) {
@@ -397,13 +484,13 @@ class CAA_Task_Plugin_Event_Type {
      * @since   1.0.0
      * @param   CAA_Task_Plugin_Task_Definition $task_definition_to_remove is the task definition that should be removed.
      */
-    public function remove_task_definition( $task_definition_to_remove ) {
+    public function remove_task_definition( CAA_Task_Plugin_Task_Definition $task_definition_to_remove ) {
 
         // remove from task_definitions
         if ( isset( $this->task_definitions ) ) {
             $this->task_definitions = array_filter( 
                 $this->task_definitions, 
-                function ( $task_definition ) {
+                function ( CAA_Task_Plugin_Task_Definition $task_definition ) use ( $task_definition_to_remove ) {
                     return ! ( $task_definition->get_id() === $task_definition_to_remove->get_id() );
                 } 
             );
@@ -412,7 +499,7 @@ class CAA_Task_Plugin_Event_Type {
         // remove from task_definition_ids
         $this->task_definition_ids = array_filter( 
             $this->task_definition_ids, 
-            function( $task_definition_id ) {
+            function( int $task_definition_id ) use ( $task_definition_to_remove ) {
                 return ! ( $task_definition_id === $task_definition_to_remove->get_id() );
             } 
         );
@@ -426,11 +513,11 @@ class CAA_Task_Plugin_Event_Type {
      * 
      * @since   1.0.0
      * @param   CAA_Task_Plugin_Event_Type $event_type is the event type that is being looked for in the subtypes.
-     * @return  boolean true if this event type has $event_type as a subtype (recursively), false otherwise
+     * @return  bool true if this event type has $event_type as a subtype (recursively), false otherwise
      */
-    public function has_subtype_recursive( $event_type ) {
+    private function has_subtype_recursive( CAA_Task_Plugin_Event_Type $event_type ): bool {
 
-        if ( array_search( $event_type->get_id(), $this->subtype_ids ) ) {
+        if ( in_array( $event_type->get_id(), $this->subtype_ids ) ) {
             return true;
         }
 
@@ -441,6 +528,31 @@ class CAA_Task_Plugin_Event_Type {
         }
 
         return false;
+    }
+
+    /**
+     * Returns true if appending $event_type_to_append would cause a cycle, false otherwise
+     * @param CAA_Task_Plugin_Event_Type $event_type_to_append
+     * @return bool
+     * @since 1.0.0
+     */
+    public function append_causes_cycle( CAA_Task_Plugin_Event_Type $event_type_to_append ): bool {
+        return $event_type_to_append->get_id() === $this->get_id() || $event_type_to_append->has_subtype_recursive( $this );
+    }
+
+    /**
+     * Gets an array of all of the subtype ids that are children of this event type. This is not a shallow
+     * operation, it is a deep operation that operates recursively on children.
+     * @return array an array of all the subtype ids that are children (or grandchildrent, etc)
+     * @since 1.0.0
+     */
+    private function get_subtype_ids_recursive(): array {
+        
+        $subtype_ids_rec = $this->subtype_ids;
+        foreach ( $this->get_subtypes() as $subtype ) {
+            $subtype_ids_rec = array_merge( $subtype_ids_rec, $subtype->get_subtype_ids_recursive() );
+        }
+        return array_unique( $subtype_ids_rec );
     }
 
 }

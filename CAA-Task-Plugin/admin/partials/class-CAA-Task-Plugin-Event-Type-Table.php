@@ -98,13 +98,13 @@ class CAA_Task_Plugin_Event_Type_Table {
 	 * @global	$wpdb		The wordpress database global
 	 * @return	CAA_Task_Plugin_Event_Type|null	The created event type or null if the event type couldn't be created. Note that the event type only has an id filled!
 	 */
-	public static function create_event_type(): int | null {
+	public static function create_event_type(): CAA_Task_Plugin_Event_Type | null {
 
 		global $wpdb;
         $table_name = $wpdb->prefix . self::TABLE_NAME;
         $res = $wpdb->insert( 
             $table_name, 
-            [ ] // no table entries, everything should be the default defined by MySQL
+            [ 'display_name' => "" ] // no table entries, everything should be the default defined by MySQL
         );
 
         if ( false === $res ) {
@@ -211,16 +211,17 @@ class CAA_Task_Plugin_Event_Type_Table {
 	 * This is used in get_event_type, and get_event_types
 	 * 
 	 * @since	1.0.0
-	 * @param	array	$table_response	is the response from an sql table.
+	 * @param	object	$table_response	is the response from an sql table.
 	 * @return	CAA_Task_Plugin_Event_Type	The event type object.
 	 */
-	private static function event_type_from_table_response( $table_response ){
+	private static function event_type_from_table_response( object $table_response ): CAA_Task_Plugin_Event_Type {
 
 		$event_type = new CAA_Task_Plugin_Event_Type( $table_response->id );
-		$event_type->set_display_name( $table_response->display_name );
-		$event_type->set_subtypes_csv( $table_response->subtypes );
-		$event_type->set_todo_definitions_csv( $table_response->todo_definitions );
-
+		$event_type->set_display_name( strval( $table_response->display_name ) );
+		$event_type->set_description( strval( $table_response->description ) );
+		$event_type->set_subtypes_csv( strval( $table_response->subtypes ) );
+		$event_type->set_task_definitions_csv( strval( $table_response->task_definitions ) );
+		
 		return $event_type;
 	}
 
@@ -235,10 +236,10 @@ class CAA_Task_Plugin_Event_Type_Table {
      * be retrieved.
      * @return CAA_Task_Plugin_Event_Type  the Event Type with the given ID.
      */
-	public static function get_event_type( int $ID ) : CAA_Task_Plugin_Event_Type|null {
+	public static function get_event_type( int $id ) : CAA_Task_Plugin_Event_Type|null {
 		global $wpdb;
         $table_name = $wpdb->prefix . self::TABLE_NAME;
-        $res = $wpdb->get_row( "SELECT * FROM $table_name WHERE ID=$ID" );
+        $res = $wpdb->get_row( "SELECT * FROM $table_name WHERE id=$id" );
 
         if ( null === $res ) {
             return null;
@@ -258,11 +259,10 @@ class CAA_Task_Plugin_Event_Type_Table {
 
 		global $wpdb;
         $table_name = $wpdb->prefix . self::TABLE_NAME;
-		$res = $wpdb->get_results( "SELECT * FROM $table_name WHERE finished=true AND deleted=false", "ARRAY_A" );
-
-		$event_types = array_map( 'self::event_type_from_table_response', $res );
-
+		$res = $wpdb->get_results( "SELECT * FROM $table_name WHERE finished=true AND deleted=false", "OBJECT" );
+		$event_types = array_map( "self::event_type_from_table_response", $res );
 		return $event_types;
+		
 	}
 
     /**

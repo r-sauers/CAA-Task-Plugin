@@ -164,6 +164,7 @@ class CAA_Task_Plugin_Task_Definition_Table {
             $res->description
         );
         $task_definition->set_id( $res->id );
+        return $task_definition;
     }
 
     /**
