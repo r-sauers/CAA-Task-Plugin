@@ -927,7 +927,7 @@ class Event_Type_Requests {
      */
     public static async get_event_types(): Promise<Response> {
 
-        const response = await fetch(window.location.origin + this.API_NAMESPACE + "event-types", {
+        const response = await fetch(window.location.origin + this.API_NAMESPACE + "/event-types", {
             method: "GET",
             headers: {
             }

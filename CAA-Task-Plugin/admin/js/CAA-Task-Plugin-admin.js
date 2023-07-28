@@ -959,7 +959,7 @@ class Event_Type_Requests {
    */
   static async get_event_types() {
     const response = await fetch(
-      window.location.origin + this.API_NAMESPACE + "event-types",
+      window.location.origin + this.API_NAMESPACE + "/event-types",
       {
         method: "GET",
         headers: {}
