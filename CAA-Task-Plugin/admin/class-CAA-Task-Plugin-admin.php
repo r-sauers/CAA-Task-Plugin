@@ -24,6 +24,11 @@ require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/partials/class-CAA-
  */
 require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/partials/class-CAA-Task-Plugin-Authenticator.php';
 
+ /**
+ * The class responsible for controlling the manage event types page
+ */
+require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/partials/class-CAA-Task-Plugin-Event-Type-Controller.php';
+
 
 /**
  * The admin-specific functionality of the plugin.
@@ -113,6 +118,7 @@ class CAA_Task_Plugin_Admin {
 		 * class.
 		 */
 
+		// wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/CAA-Task-Plugin-admin.js', array( 'jquery' ), $this->version, false );
 		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/CAA-Task-Plugin-admin.js', array( 'jquery' ), $this->version, false );
 
 	}
@@ -136,14 +142,15 @@ class CAA_Task_Plugin_Admin {
 		);
 		add_action( 'load-' . $hookname, array( get_called_class(), 'ensure_login' ) ); 
 
-		add_submenu_page(
+		$hookname = add_submenu_page(
 			$toplevel_slug,
-			'Create Event Tasks',
-			'Create Event Tasks',
+			'Manage Event Types',
+			'Manage Event Types',
 			'edit_pages',
-			'create-event-tasks',
-			array( get_called_class(), 'generate_create_event_tasks_submenu_html' )
+			'manage-event-types',
+			'CAA_Task_Plugin_Event_Type_Controller::draw_page'
 		);
+		add_action( 'load-' . $hookname, 'CAA_Task_Plugin_Event_Type_Controller::on_load' );
 	}
 
 	/**
@@ -170,19 +177,6 @@ class CAA_Task_Plugin_Admin {
 			require plugin_dir_path(__FILE__) . 'partials/CAA-Task-Plugin-admin-menu-logged-in.php';
 		}
 
-	}
-
-	/**
-	 * Display the html for the page linked to the 'Create Event Tasks' admin submenu.
-	 * 
-	 * @since 1.0.0
-	 */
-	public static function generate_create_event_tasks_submenu_html() {
-		?>
-		<div class="wrap">
-			<h1><?php echo esc_html( get_admin_page_title() ); ?></h1>
-		</div>
-		<?php
 	}
 
 	/**
