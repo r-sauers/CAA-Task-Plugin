@@ -157,8 +157,6 @@ class CAA_Task_Plugin_BasecampAuth {
         $response = wp_remote_get('https://launchpad.37signals.com/authorization.json', $args);
         $auth_details = json_decode( wp_remote_retrieve_body( $response ), true );
         return $auth_details;
-        
-        return $body['expires_at'];
     }
 
     /**

@@ -23,4 +23,3 @@
     <h2>Successfully Logged in.</h2>
     <p>Explanation of how to use plugin goes here</p>
 </div>
-<?php
