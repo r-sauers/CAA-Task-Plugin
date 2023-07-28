@@ -37,42 +37,6 @@ class CAA_Task_Plugin_Event_Type_Display {
         <?php
     }
 
-    private static function draw_event_type_editor( $parent_event_type ){
-		$REMOVABLE_CONTAINER_ID = "removable-subtypes-container";
-		$ADDABLE_CONTAINER_ID   = "addable-subtypes-container";
-        ?>
-        <h4>Event Types</h4>
-        <div id="<?php echo $REMOVABLE_CONTAINER_ID?>"></div>
-        <div id="<?php echo $ADDABLE_CONTAINER_ID?>" style="height:30%;">
-        </div>
-        <script>
-            jQuery(document).ready( async function(){
-                Event_Type_Editor.set_container_ids("<?php echo $ADDABLE_CONTAINER_ID?>", "<?php echo $REMOVABLE_CONTAINER_ID?>");
-                Event_Type_Editor.draw();
-            } );
-        </script>
-        <?php
-    }
-
-    private static function draw_task_definition_editor( $parent_event_type ){
-        ?>
-        <h4>Task Definitions</h4>
-        <div id="task-definition-container" style="height:30%;">
-        </div>
-        <script>
-            // jQuery(document).ready( async function(){
-            //     const $ = jQuery;
-            //     task_definition_data = await Task_Definition_Requests.get_task_definitions(<?php echo $parent_event_type->get_id() ?>);
-            //     console.log(task_definition_data);
-            //     draw_task_definitions(
-            //         document.getElementById("task-definition-container"),
-            //         task_definition_data
-            //     );
-            // } );
-        </script>
-        <?php
-    }
-
     public static function display_edit_page( int $id ) {
         $event_type = CAA_Task_Plugin_Event_Type_Table::get_event_type( $id );
         $REMOVABLE_CONTAINER_ID = "removable-subtypes-container";
