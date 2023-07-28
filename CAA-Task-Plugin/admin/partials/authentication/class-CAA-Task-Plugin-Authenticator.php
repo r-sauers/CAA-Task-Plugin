@@ -10,7 +10,7 @@
  * @subpackage CAA_Task_Plugin/includes
  */
 
-require_once plugin_dir_path( dirname( __FILE__ ) ) . 'partials/class-CAA-Task-Plugin-BasecampAuth.php';
+require_once plugin_dir_path( dirname( __FILE__ ) ) . 'basecamp/class-CAA-Task-Plugin-BasecampAuth.php';
 
 /**
  * Used to authenticate users with third party integrations in the admin menu

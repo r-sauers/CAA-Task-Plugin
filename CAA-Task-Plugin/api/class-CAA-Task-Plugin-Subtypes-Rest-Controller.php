@@ -14,12 +14,12 @@
  /**
  * Imports the CAA_Task_Plugin_Event_Type_Table class so the table can be accessed to generate event types and check for cycles.
  */
-require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/partials/class-CAA-Task-Plugin-Event-Type-Table.php';
+require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/partials/event-types/class-CAA-Task-Plugin-Event-Type-Table.php';
 
 /**
  * Imports the CAA_Task_Plugin_API_Validation library for validation functions
  */
-require_once plugin_dir_path( dirname( __FILE__ ) ) . 'api/class-CAA-Task-Plugin-API-Validation.php';
+require_once plugin_dir_path( __FILE__ ) . 'class-CAA-Task-Plugin-API-Validation.php';
 
  /**
  * Registers the REST API endpoint for subtypes

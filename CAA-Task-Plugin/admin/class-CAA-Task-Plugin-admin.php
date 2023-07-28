@@ -16,18 +16,18 @@
 /**
  * The class responsible for creating settings for the plugin.
  */
-require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/partials/class-CAA-Task-Plugin-Settings.php';
+require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/partials/settings/class-CAA-Task-Plugin-Settings.php';
 
  /**
  * The class responsible for authenticating the user with third party integrations 
  * such as basecamp
  */
-require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/partials/class-CAA-Task-Plugin-Authenticator.php';
+require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/partials/authentication/class-CAA-Task-Plugin-Authenticator.php';
 
  /**
  * The class responsible for controlling the manage event types page
  */
-require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/partials/class-CAA-Task-Plugin-Event-Type-Controller.php';
+require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/partials/manage-event-type-page/class-CAA-Task-Plugin-Event-Type-Controller.php';
 
 
 /**
@@ -118,7 +118,6 @@ class CAA_Task_Plugin_Admin {
 		 * class.
 		 */
 
-		// wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/CAA-Task-Plugin-admin.js', array( 'jquery' ), $this->version, false );
 		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/CAA-Task-Plugin-admin.js', array( 'jquery' ), $this->version, false );
 
 	}
@@ -174,7 +173,7 @@ class CAA_Task_Plugin_Admin {
 			CAA_Task_Plugin_Authenticator::login_user(); // send them to main page with a 'not logged in flag'
 		} else {
 			// draw main page
-			require plugin_dir_path(__FILE__) . 'partials/CAA-Task-Plugin-admin-menu-logged-in.php';
+			require plugin_dir_path(__FILE__) . 'partials/authentication/CAA-Task-Plugin-admin-menu-logged-in.php';
 		}
 
 	}

@@ -9,7 +9,7 @@
  * @package    CAA_Task_Plugin
  * @subpackage CAA_Task_Plugin/includes
  */
-require_once plugin_dir_path( dirname( __FILE__ ) ) . 'partials/class-CAA-Task-Plugin-Text-Setting.php';
+require_once plugin_dir_path( dirname( __FILE__ ) ) . 'settings/class-CAA-Task-Plugin-Text-Setting.php';
 /**
  * Used to create and retrieve settings for Basecamp.
  *

@@ -9,7 +9,7 @@
  * @package    CAA_Task_Plugin
  * @subpackage CAA_Task_Plugin/admin/partials/settings
  */
-require_once plugin_dir_path( dirname( __FILE__ ) ) . 'partials/class-CAA-Task-Plugin-Setting.php';
+require_once plugin_dir_path( __FILE__ ) . 'class-CAA-Task-Plugin-Setting.php';
 /**
  * Used to create and retrieve text settings for the plugin.
  *

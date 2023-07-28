@@ -13,12 +13,12 @@
 /**
  * Imports the CAA_Task_Plugin_Task_Definition_Table class so task definitions can be retrieved from the table.
  */
-require_once plugin_dir_path( dirname( __FILE__ ) ) . 'partials/class-CAA-Task-Plugin-Task-Definition-Table.php';
+require_once plugin_dir_path( dirname( __FILE__ ) ) . 'task-definitions/class-CAA-Task-Plugin-Task-Definition-Table.php';
 
 /**
  * Imports the CAA_Task_Plugin_Event_Type_Table class so the table can be accessed to generate event types and check for cycles.
  */
-require_once plugin_dir_path( dirname( __FILE__ ) ) . 'partials/class-CAA-Task-Plugin-Event-Type-Table.php';
+require_once plugin_dir_path( __FILE__ ) . 'class-CAA-Task-Plugin-Event-Type-Table.php';
 
 /**
  * Used to store information about event types. Event types are used to categorize events and define 

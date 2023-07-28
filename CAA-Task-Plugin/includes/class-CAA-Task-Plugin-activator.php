@@ -17,8 +17,8 @@
  * Import CAA_Task_Plugin_Task_Definition_Table and CAA_Task_Plugin_Event_Type_Table to intitialize
  * tables.
  */
-require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/partials/class-CAA-Task-Plugin-Task-Definition-Table.php';
-require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/partials/class-CAA-Task-Plugin-Event-Type-Table.php';
+require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/partials/task-definitions/class-CAA-Task-Plugin-Task-Definition-Table.php';
+require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/partials/event-types/class-CAA-Task-Plugin-Event-Type-Table.php';
 
 /**
  * Fired during plugin activation.

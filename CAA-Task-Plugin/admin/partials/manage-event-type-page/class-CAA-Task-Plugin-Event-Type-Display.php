@@ -13,7 +13,7 @@
 /**
  * The class responsible for retrieving event types from the wordpress table
  */
-require_once plugin_dir_path(  __FILE__ ) . 'class-CAA-Task-Plugin-Event-Type-Table.php';
+require_once plugin_dir_path(  dirname( __FILE__ ) ) . 'event-types/class-CAA-Task-Plugin-Event-Type-Table.php';
 
 
 /**

@@ -13,7 +13,7 @@
 /**
  * Imports the CAA_Task_Plugin_Task_Definition class so objects of that type can be returned.
  */
-require_once plugin_dir_path( dirname( __FILE__ ) ) . 'partials/class-CAA-Task-Plugin-Task-Definition.php';
+require_once plugin_dir_path( __FILE__ ) . 'class-CAA-Task-Plugin-Task-Definition.php';
 
 
 /**

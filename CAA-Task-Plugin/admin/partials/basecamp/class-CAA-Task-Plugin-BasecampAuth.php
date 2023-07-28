@@ -10,6 +10,8 @@
  * @subpackage CAA_Task_Plugin/includes
  */
 
+require_once plugin_dir_path( __FILE__ ) . 'class-CAA-Task-Plugin-Basecamp-Settings.php';
+
 /**
  * Used to authenticate users with Basecamp
  *
@@ -58,61 +60,20 @@ class CAA_Task_Plugin_BasecampAuth {
 	 */
     public static function login_user() {
 
-        $client_id = self::get_client_id();
-        // The url encoding for & is %26
-        // it is necessary to encode it because the & sign escapes out of the redirect_uri param
-        $redirect_uri = "http://localhost:8880/wp-admin/admin.php?page=caa-task-app%26basecamp-auth=true";
+        $client_id = CAA_Task_Plugin_Basecamp_Settings::get_client_id();
+        $redirect_uri = CAA_Task_Plugin_Basecamp_Settings::get_redirect_uri();
 
         $verification_code = self::get_verification_code();
         if ( empty( $verification_code ) ) {
             self::request_verification_code( $client_id, $redirect_uri ); // call exits process
         }
 
-        $client_secret = self::get_client_secret();
+        $client_secret = CAA_Task_Plugin_Basecamp_Settings::get_client_secret();
         $auth_token = self::request_auth_token( $client_id, $redirect_uri, $client_secret, $verification_code );
         $auth_details = self::request_auth_details( $auth_token );
-        if ( self::has_project_permissions($auth_token) ) {
-            $auth_expire_ISO_8601 = self::get_auth_expire_ISO_8601( $auth_token );
+        if ( self::user_has_project_permissions( $auth_details ) ) {
+            $auth_expire_ISO_8601 = self::get_auth_expire_ISO_8601( $auth_details );
             self::save_auth_token( $auth_token, $auth_expire_ISO_8601 );
-        }
-    }
-
-    /**
-	 * Retrieves the client id for the basecamp integration.
-	 *
-     * client id is not validated or sanitized.
-     * 
-     * @ignore
-	 * @since    1.0.0
-     * @return   string     the client id (used to identify the integration) or '' if there is 
-     * no client id.
-	 */
-    private static function get_client_id() {
-        global $wpdb;
-        $client_id = $wpdb->get_var( "SELECT client_id FROM {$wpdb->prefix}caa_task_plugin_variables" );
-        if ( $client_id ) {
-            return $client_id;
-        } else {
-            return '';
-        }
-    }
-
-    /**
-	 * Retrieves the client secret for the basecamp integration.
-	 *
-     * client secret is not validated or sanitized.
-     * 
-     * @ignore
-	 * @since    1.0.0
-     * @return   string     The client secret or '' if there is no client secret.
-	 */
-    private static function get_client_secret() {
-        global $wpdb;
-        $client_secret = $wpdb->get_var( "SELECT client_secret FROM {$wpdb->prefix}caa_task_plugin_variables" );
-        if ( $client_secret ) {
-            return $client_secret;
-        } else {
-            return '';
         }
     }
 
@@ -196,8 +157,6 @@ class CAA_Task_Plugin_BasecampAuth {
         $response = wp_remote_get('https://launchpad.37signals.com/authorization.json', $args);
         $auth_details = json_decode( wp_remote_retrieve_body( $response ), true );
         return $auth_details;
-        
-        return $body['expires_at'];
     }
 
     /**

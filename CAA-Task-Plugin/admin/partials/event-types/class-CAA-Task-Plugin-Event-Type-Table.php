@@ -15,7 +15,7 @@
 /**
  * Imports the CAA_Task_Plugin_Event_Type class so objects of that type can be returned.
  */
-require_once plugin_dir_path( dirname( __FILE__ ) ) . 'partials/class-CAA-Task-Plugin-Event-Type.php';
+require_once plugin_dir_path( __FILE__ ) . 'class-CAA-Task-Plugin-Event-Type.php';
 
 /**
  * Used to manage SQL table for event types and retrieve data from it.

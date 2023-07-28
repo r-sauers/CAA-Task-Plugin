@@ -8,12 +8,12 @@ require_once plugin_dir_path( __FILE__ ) . 'class-CAA-Task-Plugin-Event-Type-Dis
 /**
  * The class responsible for managing event types in the wordpress table.
  */
-require_once plugin_dir_path(  __FILE__ ) . 'class-CAA-Task-Plugin-Event-Type-Table.php';
+require_once plugin_dir_path( dirname( __FILE__ ) ) . 'event-types/class-CAA-Task-Plugin-Event-Type-Table.php';
 
 /**
  * The class responsible for representing event types.
  */
-require_once plugin_dir_path(  __FILE__ ) . 'class-CAA-Task-Plugin-Event-Type.php';
+require_once plugin_dir_path( dirname( __FILE__ ) ) . 'event-types/class-CAA-Task-Plugin-Event-Type.php';
 
 class CAA_Task_Plugin_Event_Type_Controller {
 
