@@ -34,8 +34,10 @@ if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
  * Import CAA_Task_Plugin_Task_Definition_Table and CAA_Task_Plugin_Event_Type_Table to delete
  * tables.
  */
-require_once plugin_dir_path( dir_name( __FILE__ ) ) . 'admin/partials/class-CAA-Task-Plugin-Task-Definition-Table.php';
-require_once plugin_dir_path( dir_name( __FILE__ ) ) . 'admin/partials/class-CAA-Task-Plugin-Event-Type-Table.php';
+require_once plugin_dir_path( dir_name( __FILE__ ) ) . 'admin/partials/task-definitions/class-CAA-Task-Plugin-Task-Definition-Table.php';
+require_once plugin_dir_path( dir_name( __FILE__ ) ) . 'admin/partials/event-types/class-CAA-Task-Plugin-Event-Type-Table.php';
+require_once plugin_dir_path( dir_name( __FILE__ ) ) . 'admin/partials/events/class-CAA-Task-Plugin-Event-Table.php';
 
 CAA_Task_Plugin_Task_Definition_Table::delete_table();
 CAA_Task_Plugin_Event_Type_Table::delete_table();
+CAA_Task_Plugin_Event_Table::delete_table();

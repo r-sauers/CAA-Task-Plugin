@@ -19,6 +19,7 @@
  */
 require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/partials/task-definitions/class-CAA-Task-Plugin-Task-Definition-Table.php';
 require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/partials/event-types/class-CAA-Task-Plugin-Event-Type-Table.php';
+require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/partials/events/class-CAA-Task-Plugin-Event-Table.php';
 
 /**
  * Fired during plugin activation.
@@ -40,6 +41,7 @@ class CAA_Task_Plugin_Activator {
 	public static function activate() {
 		CAA_Task_Plugin_Task_Definition_Table::create_table();
 		CAA_Task_Plugin_Event_Type_Table::create_table();
+		CAA_Task_Plugin_Event_Table::create_table();
 	}
 
 }

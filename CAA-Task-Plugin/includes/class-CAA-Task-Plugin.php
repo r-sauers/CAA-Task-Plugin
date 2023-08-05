@@ -193,6 +193,14 @@ class CAA_Task_Plugin {
 	 */
 	public function run() {
 		$this->loader->run();
+
+		if(true){
+			require_once( plugin_dir_path( dirname( __FILE__ ) ) . 'admin/partials/events/class-CAA-Task-Plugin-Event-Test.php' );
+
+			CAA_Task_Plugin_Event_Test::test();
+		}
+		
+
 	}
 
 	/**
