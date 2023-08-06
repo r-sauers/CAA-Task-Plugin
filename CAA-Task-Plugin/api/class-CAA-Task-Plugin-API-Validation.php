@@ -40,6 +40,16 @@ abstract class CAA_Task_Plugin_API_Validation {
     }
 
     /**
+     * Validates whether $str is a valid event id
+     * @param string $str
+     * @return bool
+     * @since 1.0.0
+     */
+    public static function event_id_validation( string $str ): bool {
+    return is_numeric( $str );
+    }
+
+    /**
      * Validates whether $str is a valid task definition id
      * @param string $str
      * @return bool

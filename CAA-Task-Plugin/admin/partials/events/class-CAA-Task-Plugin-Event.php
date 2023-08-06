@@ -327,4 +327,27 @@ class CAA_Task_Plugin_Event {
 
 		}
 	}
+
+	/**
+	 * Gets event types that can be added to the event without being redundant.
+	 * @return array
+	 * @since 1.0.0
+	 */
+	public function get_addable_event_types(): array {
+		$event_types         = CAA_Task_Plugin_Event_Type_Table::get_event_types();
+		$used_event_types    = $this->get_event_types();
+		$addable_event_types = array_filter(
+			$event_types,
+			function (CAA_Task_Plugin_Event_Type $event_type) use ($used_event_types) {
+				foreach ( $used_event_types as $used_event_type ) {
+					if ( !$used_event_type->excludes_subtype( $event_type ) || $used_event_type->get_id() === $event_type->get_id() ) {
+						return false;
+					}
+				}
+				return true;
+			}
+		);
+
+		return $addable_event_types;
+	}
 }

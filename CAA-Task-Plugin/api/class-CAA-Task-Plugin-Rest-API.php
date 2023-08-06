@@ -10,6 +10,16 @@
  */
 
  /**
+ * Imports the CAA_Task_Plugin_Event_Rest_Controller class
+ */
+require_once plugin_dir_path( __FILE__ ) . 'class-CAA-Task-Plugin-Event-Rest-Controller.php';
+
+ /**
+ * Imports the CAA_Task_Plugin_Event_Event_Types_Rest_Controller class
+ */
+require_once plugin_dir_path( __FILE__ ) . 'class-CAA-Task-Plugin-Event-Event-Types-Rest-Controller.php';
+
+ /**
  * Imports the CAA_Task_Plugin_Event_Types_Rest_Controller class
  */
 require_once plugin_dir_path( __FILE__ ) . 'class-CAA-Task-Plugin-Event-Types-Rest-Controller.php';
@@ -47,6 +57,12 @@ class CAA_Task_Plugin_Rest_API {
 
         $task_definitions_controller = new CAA_Task_Plugin_Task_Definitions_Rest_Controller();
         $task_definitions_controller->register_routes();
+
+		$events_controller = new CAA_Task_Plugin_Event_Rest_Controller();
+		$events_controller->register_routes();
+
+        $event_event_types_controller = new CAA_Task_Plugin_Event_Event_Types_Rest_Controller();
+		$event_event_types_controller->register_routes();
     }
     
 } 
