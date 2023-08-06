@@ -205,7 +205,7 @@ class CAA_Task_Plugin_Event_Type {
         }
     }
 
-    public function contains_subtype( $event_type ){
+    public function excludes_subtype( $event_type ){
         $rec_subtype_ids = $this->get_subtype_ids_recursive();
         foreach ( $rec_subtype_ids as $subtype_id ){
             if( $event_type->get_id() === $subtype_id ){
@@ -223,7 +223,7 @@ class CAA_Task_Plugin_Event_Type {
         $addable_subtypes = CAA_Task_Plugin_Event_Type_Table::get_event_types();
 
         // filter out subtypes that are already included
-        $addable_subtypes = array_filter( $addable_subtypes, array($this, 'contains_subtype' ) );
+        $addable_subtypes = array_filter( $addable_subtypes, array($this, 'excludes_subtype' ) );
         
         $parent_event_type = $this;
         // filter out subtypes that would cause a cycle
