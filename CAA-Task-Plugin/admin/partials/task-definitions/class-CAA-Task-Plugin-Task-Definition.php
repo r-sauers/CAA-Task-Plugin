@@ -96,7 +96,7 @@ class CAA_Task_Plugin_Task_Definition {
         $this->id = null;
         $this->title = $title;
         $this->start_offset_in_days = $start_offset_in_days;
-        $this->finsih_offset_in_days = $finish_offset_in_days;
+        $this->finish_offset_in_days = $finish_offset_in_days;
         $this->description = $description;
     }
 
