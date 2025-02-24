@@ -1,18 +1,13 @@
-# CAA Task Plugin
+# CAA Task Plugin (Development Paused)
 
-[TODO]
-
-## How To Use Plugin
-
-[TODO]
+The plugin integrates with Basecamp and Google to create tasks and documents when an event is created.
+The plugin will enable Compassionate Action for Animal's events to be planned with less work setting up Basecmp takss, and Google Documents.
 
 ## Contributing
 
 Please see:
 * [Coding Standards](http://codex.wordpress.org/WordPress_Coding_Standards)
 * [Documentation Standards](https://make.wordpress.org/core/handbook/best-practices/inline-documentation-standards/php/)
-
-[TODO]
 
 ## License
 
